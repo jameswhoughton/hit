@@ -33,6 +33,34 @@ func (h *headers) Set(value string) error {
 	return nil
 }
 
+func setHeaders(headers headers, r *http.Request) {
+	defaultHeaders := make(map[string]string, 3)
+
+	defaultHeaders["Accept"] = "application/json"
+	defaultHeaders["User-Agent"] = "HIT"
+	defaultHeaders["Content-Type"] = "application/json"
+
+	for _, header := range headers {
+		parts := strings.Split(header, ":")
+
+		if len(parts) != 2 {
+			continue
+		}
+
+		if _, ok := defaultHeaders[parts[0]]; ok {
+			defaultHeaders[parts[0]] = parts[1]
+
+			continue
+		}
+
+		r.Header.Add(parts[0], parts[1])
+	}
+
+	for name, value := range defaultHeaders {
+		r.Header.Add(name, value)
+	}
+}
+
 func main() {
 
 	var url string
@@ -78,11 +106,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	for _, header := range headers {
-		parts := strings.Split(header, ":")
+	setHeaders(headers, req)
 
-		req.Header.Add(parts[0], parts[1])
-	}
+	fmt.Println(req.Header)
 
 	resp, err := client.Do(req)
 
