@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -37,7 +39,7 @@ func setHeaders(headers headers, r *http.Request) {
 	defaultHeaders := make(map[string]string, 3)
 
 	defaultHeaders["Accept"] = "application/json"
-	defaultHeaders["User-Agent"] = "HIT"
+	defaultHeaders["User-Agent"] = "HIT/0.01"
 	defaultHeaders["Content-Type"] = "application/json"
 
 	for _, header := range headers {
@@ -118,7 +120,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Print(resp)
+	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Println(err)
+
+		os.Exit(1)
+	}
+
+	jsonFormatted, err := json.MarshalIndent(string(body), "", "    ")
+
+	if err == nil {
+		fmt.Println(string(body))
+		fmt.Println(string(jsonFormatted))
+
+		os.Exit(0)
+	}
+
+	fmt.Println(resp)
 
 	os.Exit(0)
 }
