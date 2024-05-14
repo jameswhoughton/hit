@@ -128,10 +128,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	jsonFormatted, err := json.MarshalIndent(string(body), "", "    ")
+	var data json.RawMessage
+
+	json.Unmarshal(body, &data)
+
+	jsonFormatted, err := json.MarshalIndent(data, "", "    ")
 
 	if err == nil {
-		fmt.Println(string(body))
 		fmt.Println(string(jsonFormatted))
 
 		os.Exit(0)
