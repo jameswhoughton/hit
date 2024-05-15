@@ -39,7 +39,7 @@ func setHeaders(headers headers, r *http.Request) {
 	defaultHeaders := make(map[string]string, 3)
 
 	defaultHeaders["Accept"] = "application/json"
-	defaultHeaders["User-Agent"] = "HIT/0.01"
+	defaultHeaders["User-Agent"] = "CROW/0.01"
 	defaultHeaders["Content-Type"] = "application/json"
 
 	for _, header := range headers {
